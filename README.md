@@ -5,7 +5,7 @@ Create a web application using a technology stack that meets Cloud-Native Web Ap
 
 Spring Boot Application-
 
--Building a RESTful API and run it through web server.
+-Building a RESTful API and run it through web server
 
 Prerequisite and Technology-
 
