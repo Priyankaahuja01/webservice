@@ -16,7 +16,7 @@ class DemoApplicationTests {
 	void contextLoads() {
 		a = new A1Controller();
 		ResponseEntity<String> responseInvoiceResponseEntity = a.getStatus() ;
-		assertEquals("400 OK",responseInvoiceResponseEntity.getStatusCode().toString());
+		assertEquals("200 OK",responseInvoiceResponseEntity.getStatusCode().toString());
 		
 	}
 
