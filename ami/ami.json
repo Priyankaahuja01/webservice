@@ -3,7 +3,7 @@
         "region" : "us-east-1",
         "aws_access_key_id": "{{ env `AWS_ACCESS_KEY_ID` }}",
         "aws_secret_access_key": "{{ env `AWS_SECRET_ACCESS_KEY` }}",
-        "source_ami" : "ami-033b95fb8079dc481"
+        "source_ami" : "ami-033b95fb8079dc481" 
     },
     "builders" : [
         {
@@ -22,7 +22,7 @@
                 "Name" : "packer-builder"
             },
             "ami_block_device_mappings": [
-           {
+           {     
             "delete_on_termination": true,
             "device_name": "/dev/xvda",
             "volume_size": 60,
@@ -43,9 +43,24 @@
             "destination": "demo-0.0.1-SNAPSHOT.jar"
         },
         {
+            "type": "file",
+            "source": "webservice.service",
+            "destination": "/tmp/"
+            },
+            {
+                "type": "shell",
+                "inline":[
+                "echo '****************** Moving webservice! *********************'",
+                "sudo cp /tmp/webservice.service /etc/systemd/system",
+                "sudo systemctl start webservice.service",
+                "sudo systemctl enable webservice.service",
+                "echo '****************** Copied webservice! *********************'"
+                ]
+                },   
+        {
             "type": "shell",
             "inline": ["sleep 30",
-			"sudo yum -y install java-17",
+			"sudo yum -y install java-11",
 			"sudo yum -y install https://dev.mysql.com/get/mysql80-community-release-el7-5.noarch.rpm",
 			"echo 'Install epel'",
 			"sudo amazon-linux-extras install epel",
@@ -55,7 +70,7 @@
 			"systemctl status mysqld",
             "passwords=$(sudo grep 'temporary password' /var/log/mysqld.log | awk {'print $13'})",
             "mysql --connect-expired-password -u root -p$passwords -e \"ALTER USER 'root'@'localhost' IDENTIFIED BY 'Priyanka@01';\"",
-            "mysql -u root -pPriyanka@01 -e \"create database crudusers;\""
+            "mysql -u root -pPriyanka@01 -e \"create database crudusers;\""        
 			]
         }
     ]
