@@ -4,7 +4,7 @@
         "aws_access_key_id": "{{ env `AWS_ACCESS_KEY_ID` }}",
         "aws_secret_access_key": "{{ env `AWS_SECRET_ACCESS_KEY` }}",
         "source_ami" : "ami-033b95fb8079dc481"
-    
+        
     },
     "builders" : [
         {
@@ -18,7 +18,7 @@
             "ssh_username" : "ec2-user",
             "ami_name" : "custom-ami_{{timestamp}}",
             "ami_description" : "Amazon Machine Image",
-			"ami_users": ["814373397016"],
+			"ami_users": ["171681676153","814373397016"],
             "run_tags" : {
                 "Name" : "packer-builder"
             },
