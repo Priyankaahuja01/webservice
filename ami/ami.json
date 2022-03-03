@@ -42,11 +42,11 @@
             "source": "demo-0.0.1-SNAPSHOT.jar",
             "destination": "demo-0.0.1-SNAPSHOT.jar"
         },
-  
+
         {
             "type": "shell",
             "inline": ["sleep 30",
-			"sudo yum -y install java-11",
+			"sudo yum -y install java-17",
 			"sudo yum -y install https://dev.mysql.com/get/mysql80-community-release-el7-5.noarch.rpm",
 			"echo 'Install epel'",
 			"sudo amazon-linux-extras install epel",
