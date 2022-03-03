@@ -24,6 +24,7 @@ jobs:
      - name: Run unit tests
        run: |
           mvn -B package --file pom.xml
+          mvn clean install
           mkdir pcee && cp target/demo-0.0.1-SNAPSHOT.jar pcee
           cp pcee/*.jar ami
           cd ami && ls --all
