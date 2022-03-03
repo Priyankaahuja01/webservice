@@ -21,6 +21,14 @@
             "run_tags" : {
                 "Name" : "packer-builder"
             },
+            "ami_block_device_mappings": [
+           {     
+            "delete_on_termination": true,
+            "device_name": "/dev/xvda",
+            "volume_size": 60,
+            "volume_type": "gp2"
+           }
+        ],
             "tags" : {
                 "Tool" : "Packer",
                 "Author" : "user",
@@ -30,6 +38,11 @@
     ],
     "provisioners" : [
 	      {
+            "type": "file",
+            "source": "demo-0.0.1-SNAPSHOT.jar",
+            "destination": "demo-0.0.1-SNAPSHOT.jar"
+        },
+        {
             "type": "file",
             "source": "demo-0.0.1-SNAPSHOT.jar",
             "destination": "demo-0.0.1-SNAPSHOT.jar"
@@ -47,7 +60,7 @@
 			"systemctl status mysqld",
             "passwords=$(sudo grep 'temporary password' /var/log/mysqld.log | awk {'print $13'})",
             "mysql --connect-expired-password -u root -p$passwords -e \"ALTER USER 'root'@'localhost' IDENTIFIED BY 'Priyanka@01';\"",
-            "mysql -u root -pPriyanka@01 -e \"create database users;\""        
+            "mysql -u root -pPriyanka@01 -e \"create database crudusers;\""        
 			]
         }
     ]
