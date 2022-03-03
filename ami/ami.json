@@ -61,7 +61,7 @@
 			"systemctl status mysqld",
             "passwords=$(sudo grep 'temporary password' /var/log/mysqld.log | awk {'print $13'})",
             "mysql --connect-expired-password -u root -p$passwords -e \"ALTER USER 'root'@'localhost' IDENTIFIED BY 'Priyanka@01';\"",
-            "mysql -u root -pPriyanka@01 -e \"create database crudusers;\"",
+            "mysql -u root -pPriyanka@01 -e \"create database crudusers;\""
             
 			]
         },
