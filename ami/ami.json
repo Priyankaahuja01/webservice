@@ -62,8 +62,7 @@
             "passwords=$(sudo grep 'temporary password' /var/log/mysqld.log | awk {'print $13'})",
             "mysql --connect-expired-password -u root -p$passwords -e \"ALTER USER 'root'@'localhost' IDENTIFIED BY 'Priyanka@01';\"",
             "mysql -u root -pPriyanka@01 -e \"create database crudusers;\"",
-            "cd ~",
-            "cd /etc/systemd/system"
+            
 			]
         },
         {
@@ -73,6 +72,8 @@
             "sudo cp app.service /etc/systemd/system",
             "sudo systemctl start app.service",
             "sudo systemctl enable app.service",
+            "sudo systemctl restart app.service",
+            "sudo systemctl status app.service",
             "echo '****************** Copied webservice! *********************'"
             ]
             }
