@@ -224,7 +224,7 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
 				//statsd.recordExecutionTime("DB Response Time - Update user in db", System.currentTimeMillis() - startTime2);
 				//statsd.recordExecutionTime("Api Response Time - Put user/self - Update user",System.currentTimeMillis() - startTime);
-				return new ResponseEntity<>("Update success", HttpStatus.OK);
+				return new ResponseEntity<>("Update success", HttpStatus.NO_CONTENT);
 
 			} else {
 				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
