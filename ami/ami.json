@@ -63,7 +63,7 @@
             "mysql --connect-expired-password -u root -p$passwords -e \"ALTER USER 'root'@'localhost' IDENTIFIED BY 'Priyanka@01';\"",
             "mysql -u root -pPriyanka@01 -e \"create database crudusers;\"",
             "cd ~",
-            "cd/etc/systemd/system"
+            "cd /etc/systemd/system"
 			]
         },
         {
