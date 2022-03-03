@@ -21,7 +21,11 @@ jobs:
        uses: actions/setup-java@v1
        with:
           java-version: 17
+          
      - name: Run unit tests
+       run: mvn test
+       
+     - name: Building jar
        run: |
           mvn -B package --file pom.xml
           mvn clean install
