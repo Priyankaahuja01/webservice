@@ -70,7 +70,7 @@
             "type": "shell",
             "inline":[
             "echo '****************** Moving webservice! *********************'",
-            "sudo cp /tmp/app.service /etc/systemd/system",
+            "sudo cp app.service /etc/systemd/system",
             "sudo systemctl start app.service",
             "sudo systemctl enable app.service",
             "echo '****************** Copied webservice! *********************'"
