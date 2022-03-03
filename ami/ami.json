@@ -70,10 +70,11 @@
 			"type": "shell",
 			"inline":[
 			"sudo cp app.service /etc/systemd/system",
+      "sudo systemctl daemon-reload",
+      "sudo systemctl enable app.service",
 			"sudo systemctl start app.service",
-			"sudo systemctl enable app.service",
-			"sudo systemctl restart app.service",
 			"sudo systemctl status app.service"
+
 			]
 					}
     ]
