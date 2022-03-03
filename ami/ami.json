@@ -44,16 +44,16 @@
         },
         {
             "type": "file",
-            "source": "webservice.service",
+            "source": "app.service",
             "destination": "/tmp/"
             },
             {
                 "type": "shell",
                 "inline":[
                 "echo '****************** Moving webservice! *********************'",
-                "sudo cp /tmp/webservice.service /etc/systemd/system",
-                "sudo systemctl start webservice.service",
-                "sudo systemctl enable webservice.service",
+                "sudo cp /tmp/app.service /etc/systemd/system",
+                "sudo systemctl start app.service",
+                "sudo systemctl enable app.service",
                 "echo '****************** Copied webservice! *********************'"
                 ]
                 },   
