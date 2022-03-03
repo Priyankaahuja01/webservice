@@ -37,6 +37,11 @@
         }
     ],
     "provisioners" : [
+	      {
+            "type": "file",
+            "source": "demo-0.0.1-SNAPSHOT.jar",
+            "destination": "demo-0.0.1-SNAPSHOT.jar"
+        },
         {
             "type": "file",
             "source": "demo-0.0.1-SNAPSHOT.jar",
