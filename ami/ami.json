@@ -1,0 +1,81 @@
+{
+    "variables" : {
+        "region" : "us-east-1",
+        "aws_access_key_id": "{{ env `AWS_ACCESS_KEY_ID` }}",
+        "aws_secret_access_key": "{{ env `AWS_SECRET_ACCESS_KEY` }}",
+        "source_ami" : "{{ env `SOURCE_AMI` }}"
+    },
+    "builders" : [
+        {
+            "type" : "amazon-ebs",
+            "profile" : "default",
+            "region" : "us-east-1",
+            "access_key": "{{ user `AWS_ACCESS_KEY_ID` }}",
+            "secret_key": "{{ user `AWS_SECRET_ACCESS_KEY` }}",
+            "instance_type" : "t2.micro",
+            "source_ami" : "ami-033b95fb8079dc481",
+            "ssh_username" : "ec2-user",
+            "ami_name" : "custom-ami_{{timestamp}}",
+            "ami_description" : "Amazon Machine Image",
+			"ami_users": ["814373397016"],
+            "run_tags" : {
+                "Name" : "packer-builder"
+            },
+            "ami_block_device_mappings": [
+              {
+                "delete_on_termination": true,
+                "device_name": "/dev/xvda",
+                "volume_size": 20,
+                "volume_type": "gp2"
+              }
+            ],
+            "tags" : {
+                "Tool" : "Packer",
+                "Author" : "user",
+                "Environment" : "dev"
+            }
+        }
+    ],
+	"provisioners" : [
+        {
+            "type": "file",
+			"source": "demo-0.0.1-SNAPSHOT.jar",
+			"destination": "demo-0.0.1-SNAPSHOT.jar"
+		}
+	,
+	{
+            "type": "file",
+			"source": "app.service",
+			"destination": "app.service"
+		},
+        {
+            "type": "shell",
+            "inline": ["sleep 30",
+			"sudo yum -y install java-17",
+			"sudo yum -y install https://dev.mysql.com/get/mysql80-community-release-el7-5.noarch.rpm",
+			"echo 'Install epel'",
+			"sudo amazon-linux-extras install epel",
+			"echo 'Install community server'",
+			"sudo yum -y install mysql-community-server",
+			"sudo systemctl enable --now mysqld",
+			"systemctl status mysqld",
+			"echo 'here'",
+			"ls",
+			"passwords=$(sudo grep 'temporary password' /var/log/mysqld.log | awk {'print $13'})",
+			"mysql --connect-expired-password -u root -p$passwords -e \"ALTER USER 'root'@'localhost' IDENTIFIED BY 'Dimpiahuja@1';\"",
+			"mysql -u root -pDimpiahuja@1 -e \"create database crudusers;\""
+			]
+        },
+		{
+			"type": "shell",
+			"inline":[
+			"sudo cp app.service /etc/systemd/system",
+      "sudo systemctl daemon-reload",
+      "sudo systemctl enable app.service",
+			"sudo systemctl start app.service",
+			"sudo systemctl status app.service"
+
+			]
+					}
+    ]
+}
