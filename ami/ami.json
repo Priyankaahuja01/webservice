@@ -34,7 +34,7 @@
                 "Author" : "user",
                 "Environment" : "dev"
             }
-        }
+        
     ],
 	"provisioners" : [
         {
