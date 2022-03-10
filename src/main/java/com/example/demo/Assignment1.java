@@ -20,11 +20,11 @@ public class Assignment1 {
 
 }
 
-//@RestController
-//class A1Controller{
-//	@GetMapping(value="/healthz")
-//	public ResponseEntity<String> getStatus() {
-//		return new ResponseEntity<>("Hello", org.springframework.http.HttpStatus.OK);
-//	}
-//	
-//}
+@RestController
+class A1Controller{
+	@GetMapping(value="/healthz")
+	public ResponseEntity<String> getStatus() {
+		return new ResponseEntity<>("Hello", org.springframework.http.HttpStatus.OK);
+	}
+	
+}

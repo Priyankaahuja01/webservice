@@ -2,6 +2,8 @@
 Description=CSYE6225-webapp
 After=syslog.target
 
+[Install]
+WantedBy=multi-user.target
 
 
 [Service]
@@ -9,11 +11,4 @@ User=ec2-user
 ExecStart=/usr/bin/java -jar home/ec2-user/demo-0.0.1-SNAPSHOT.jar
 SuccessExitStatus=143
 RemainAfterExit=yes
-
-
-
-
-
-[Install]
-WantedBy=multi-user.target
 
