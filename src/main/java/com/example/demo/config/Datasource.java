@@ -15,13 +15,13 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 public class Datasource {
 
 	
-	@Value("${spring.datasource.url:jdbc:mysql://localhost:3306/crudusers}")
+	@Value("${spring.datasource.url}")
     private String main_url;
 	
-	@Value("${spring.datasource.username:root}")
+	@Value("${spring.datasource.username}")
     private String main_username;
 	
-	@Value("${spring.datasource.password:Dimdim@01}")
+	@Value("${spring.datasource.password}")
     private String main_password;
 	
 	
