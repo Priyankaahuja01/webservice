@@ -19,27 +19,22 @@ public class S3Config {
     private String region;
     
 
-	@Value("${aws.access_key_id}")
-    private String awsId;
-
-    @Value("${aws.secret_access_key}")
-    private String awsKey;
+//	@Value("${aws.access_key_id}")
+//    private String awsId;
+//
+//    @Value("${aws.secret_access_key}")
+//    private String awsKey;
     
     @Primary
     @Bean 
     public AmazonS3 s3client() {
     	
-    	BasicAWSCredentials awsCredentials = new BasicAWSCredentials(awsId, awsKey);
-        AmazonS3 amazonS3Client = AmazonS3ClientBuilder.standard()
-                .withRegion(Regions.fromName(region))
-                .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
-                .build();
 
-//        AmazonS3 amazonS3Client = AmazonS3ClientBuilder.standard()
-//        .withRegion(region)
-//        .withCredentials(new InstanceProfileCredentialsProvider(false))
-//        .build();
-return amazonS3Client;
+        AmazonS3 amazonS3Client = AmazonS3ClientBuilder.standard()
+        .withRegion(region)
+        .withCredentials(new InstanceProfileCredentialsProvider(false))
+        .build();
+        return amazonS3Client;
    
     }
 }
