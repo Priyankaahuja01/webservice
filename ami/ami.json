@@ -50,8 +50,15 @@
 		},
         {
             "type": "shell",
-            "inline": ["sleep 30",
-			"sudo yum -y install java-17"
+            "inline": [               
+                "sleep 30",
+                "sudo yum -y install java-17",
+                "sudo yum install ruby -y",
+                "sudo wget https://aws-codedeploy-{{user `region`}}.s3.{{user `region`}}.amazonaws.com/latest/install",
+                "sudo chmod +x ./install",
+                "sudo ./install auto",
+                "sudo service codedeploy-agent start",
+                "sudo service codedeploy-agent status"
 			]
         }
     ]
