@@ -7,7 +7,6 @@ jobs:
   build_deploy:
     runs-on: ubuntu-latest
     steps:
-      # checkout repository
       - name: Checkout repository
         uses: actions/checkout@v2
       # Java JDK 11
