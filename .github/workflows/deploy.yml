@@ -1,7 +1,8 @@
+#Workflow
 name: Build and Deploy Webapp
 on:
   push:
-    branches: [ main ]
+     branches: [ main ]
   workflow_dispatch:
 jobs: 
   build_deploy:
@@ -28,8 +29,8 @@ jobs:
       # # Install Packages
       # - name: Install apt & zip
       #   run: sudo apt-get update && sudo apt-get install wget zip unzip -y
-       - name: Building jar
-       run: |
+     - name: Building jar
+        run: |
           mvn -B package --file pom.xml
           mvn clean install
           mkdir pcee && cp target/demo-0.0.1-SNAPSHOT.jar pcee
