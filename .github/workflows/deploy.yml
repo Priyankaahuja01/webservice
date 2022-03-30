@@ -1,27 +1,36 @@
 #Workflow
 name: Build and Deploy Webapp
+
+
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
-jobs: 
-  build_deploy:
-   runs-on: ubuntu-latest
-   steps:
-     - name: Checkout repository
-       uses: actions/checkout@v2
-      # Java JDK 11
-     - name: set JDK 17
-       uses: actions/setup-java@v1
-       with:
-        java-version: 17
-     - name: Run unit tests
-       run: mvn test
-      # Set up sha_short variable
-     - name: Set sha_short
-       id: vars
-       run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
 
+  workflow_dispatch:
+
+jobs:
+  build_deploy:
+
+    # runner
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Java JDK 11
+      - name: set JDK 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: Run unit tests
+        run: mvn test
+      # Set up sha_short variable
+      - name: Set sha_short
+        id: vars
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
       # Build
      - name: Building Artifact
        run: |          
