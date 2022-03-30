@@ -3,10 +3,10 @@ on:
   push:
     branches: [ main ]
   workflow_dispatch:
-jobs:
+jobs: 
   build_deploy:
-    runs-on: ubuntu-latest
-    steps:
+      runs-on: ubuntu-latest
+      steps:
       - name: Checkout repository
         uses: actions/checkout@v2
       # Java JDK 11
