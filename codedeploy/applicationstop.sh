@@ -8,9 +8,7 @@
 
 
 # sudo ls -al
-sudo rm -rf target/
-sudo rm -rf codedeploy/
-sudo rm -f appspec.yml
+
 sudo systemctl stop app.service
 # sudo ls -al
 echo "ending"
