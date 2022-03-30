@@ -7,8 +7,8 @@ on:
 
 jobs:
   build_deploy:
-    runs-on: ubuntu-latest
-    steps:
+   runs-on: ubuntu-latest
+   steps:
       # checkout repository
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -25,26 +25,26 @@ jobs:
         id: vars
         run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
       # Build
-     - name: Building Artifact
-       run: |          
+      - name: Building Artifact
+        run: |          
           mvn clean install -Dmaven.test.skip=true
       # # Install Packages
       # - name: Install apt & zip
       #   run: sudo apt-get update && sudo apt-get install wget zip unzip -y
-     - name: Building jar
-       run: |
+      - name: Building jar
+        run: |
           mvn -B package --file pom.xml
           mvn clean install
           mkdir pcee && cp target/demo-0.0.1-SNAPSHOT.jar pcee
           cp pcee/*.jar ami
           cd ami && ls --all
 
-     - name: Packer build
-       uses: ExitoLab/packer_build_action_aws@v0.2.10
-       with:
+      - name: Packer build
+        uses: ExitoLab/packer_build_action_aws@v0.2.10
+        with:
          templateFile: 'ami.json'
          workingDir: 'ami'
-       env:
+        env:
            AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID }}
            AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY }}
            AWS_DEFAULT_REGION: us-east-1
