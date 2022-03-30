@@ -22,7 +22,7 @@ public class Assignment1 {
 
 @RestController
 class A1Controller{
-	@GetMapping(value="/healthy")
+	@GetMapping(value="/healthz")
 	public ResponseEntity<String> getStatus() {
 		return new ResponseEntity<>("Hello", org.springframework.http.HttpStatus.OK);
 	}
