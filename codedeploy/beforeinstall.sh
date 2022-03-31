@@ -6,4 +6,4 @@ echo "before install"
 
 sudo systemctl stop app.service
 
-rm -rf /home/ec2-user/*.jar
+sudo rm -rf /home/ec2-user/*.jar
