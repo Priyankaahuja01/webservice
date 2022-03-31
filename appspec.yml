@@ -8,18 +8,18 @@ files:
 
 hooks:
   ApplicationStop:
-    - location: ./codedeploy/applicationStop.sh
+    - location: ./codedeploy/applicationstop.sh
       timeout: 180
       runas: ec2-user
   BeforeInstall:
-    - location: ./codedeploy/beforeInstall.sh
+    - location: ./codedeploy/beforeinstall.sh
       timeout: 180
       runas: ec2-user
   AfterInstall:
-   - location: ./codedeploy/afterInstall.sh
+   - location: ./codedeploy/afterinstall.sh
      timeout: 180
      runas: ec2-user
   ApplicationStart:
-    - location: ./codedeploy/applicationStart.sh
+    - location: ./codedeploy/applicationstart.sh
       timeout: 180
       runas: ec2-user
