@@ -57,7 +57,6 @@ public class UserController {
 		ResponseEntity<User> userResponse = null;
 try{
 		long startTime = System.currentTimeMillis();
-        //statsd.increment("Calls - Get user/self - User");
 
 
 		String upd = request.getHeader("authorization");
@@ -69,8 +68,7 @@ try{
 		String userName = pair.split(":")[0];
 		String password = pair.split(":")[1];
 
-		//System.out.println("username: " + userName);
-		//System.out.println("password: " + password);
+		
 
 		System.out.println("Setting for get request");
 		multitenantManager.setCurrentTenant("all");
@@ -87,19 +85,7 @@ try{
 			} else {
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
-//	  UserDetailsRequest request = new UserDetailsRequest();
-//	    request.setUsername(principal.getName());
-//	    return userService.details(request);
-//		System.out.println("principal");
-//		String name = p.getName();
-//User users = userservice.loadUserByUsername(name);
-// userResponse = new UserResponse();
-//userResponse.setId(users.getId());
-//userResponse.setFirstName(users.getFirst_name());
-//userResponse.setLastName(users.getLast_name());
-//userResponse.setUsername(users.getUsername());
-//userResponse.setAccount_created(users.getAccount_created());
-//userResponse.setAccount_updated(users.getAccount_updated());
+
 
 	}
 	catch(Exception e)
@@ -114,13 +100,11 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	@PostMapping("/user")
 	public ResponseEntity<User> createUser(@RequestBody User user) {
 		try {
-			//System.out.println("in post");
-			//check values
+			
 
 
 			System.out.println("In post /user");
 			long startTime = System.currentTimeMillis();
-//            statsd.increment("Calls - Post user/ - Create new User");
 			if(user==null || user.getPassword() == null || user.getFirst_name() == null || 
 					user.getUsername() == null || user.getLast_name() == null)
 			{
@@ -130,14 +114,12 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			// check if already exists
 
 			long startTime1 = System.currentTimeMillis();
-//			statsd.increment("Calls - find User by username");
 			System.out.println("calling get user");	
 
 			System.out.println("Setting for post request");
 			multitenantManager.setCurrentTenant("all");
 			Optional<User> u = userRepository.findByUsername(user.getUsername());
 
-			//statsd.recordExecutionTime("DB Response Time - Get user", System.currentTimeMillis() - startTime1);
 
 			System.out.println("checking if user is present");	
 			if (u.isPresent()) {
@@ -155,13 +137,9 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 					User _user = userRepository
 							.save(new User(user.getFirst_name(), user.getLast_name(), user.getPassword(), user.getUsername()));
 
-					//statsd.recordExecutionTime("DB Response Time - Save user in db", System.currentTimeMillis() - startTime2);
 
 					System.out.println("user saved in db, sending sns topic psoting call");	
-					//create entry in dynamodb to trigger lambda by sns
-					//snsService.postToTopic("POST", _user.getUsername());
-
-					//statsd.recordExecutionTime("Api Response Time - Post user/ - Create user",System.currentTimeMillis() - startTime);
+					
 
 					return new ResponseEntity<>(_user, HttpStatus.CREATED);
 				} catch (Exception e) {
@@ -176,7 +154,6 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
 		System.out.println("In put /user/self");
 		long startTime = System.currentTimeMillis();
-		//statsd.increment("Calls - Put user/self - Update User");
 
 		if (user == null) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -199,28 +176,17 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		String userName = pair.split(":")[0];
 		String password = pair.split(":")[1];
 
-		//System.out.println("username: " + userName);
-		//System.out.println("password: " + password);
 		
 		System.out.println("Setting for put request");
 		multitenantManager.setCurrentTenant("all");
 
 		long startTime1 = System.currentTimeMillis();
-		//statsd.increment("Calls - find User by username");
 		Optional<User> oldUser1 = userRepository.findByUsername(userName);
 
-		//statsd.recordExecutionTime("DB Response Time - Get user", System.currentTimeMillis() - startTime1);
-
-		// validate password
+	
 		if (oldUser1.isPresent()) {
 			if (bCryptPasswordEncoder.matches(password, oldUser1.get().getPassword())) {// update
 				
-				
-				//check if verified user
-//				if(!oldUser1.get().isVerified()) {
-//					System.out.println("User is not yet verified");
-//					return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-//				}
 				
 				
 				User oldUser = oldUser1.get();
@@ -233,8 +199,6 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				long startTime2 = System.currentTimeMillis();
 				userRepository.save(oldUser);
 
-				//statsd.recordExecutionTime("DB Response Time - Update user in db", System.currentTimeMillis() - startTime2);
-				//statsd.recordExecutionTime("Api Response Time - Put user/self - Update user",System.currentTimeMillis() - startTime);
 				return new ResponseEntity<>("Update success", HttpStatus.OK);
 
 			} else {
@@ -254,8 +218,7 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
 		System.out.println("In post /user/self/pic");
 		long startTime = System.currentTimeMillis();
-		//statsd.increment("Calls - Post user/self/pic - Post pic of User");
-		 //check user credentials and get userid
+		
 		 String upd = request.getHeader("authorization");
 			if (upd == null || upd.isEmpty()) {
 				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -265,32 +228,22 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			String userName = pair.split(":")[0];
 			String password = pair.split(":")[1];
 
-			//System.println("username: " + userName);
-			//System.out.println("password: " + password);
+			
 
 
 			System.out.println("Setting for post request");
-			//multiTenantManager.setCurrentTenant("all");
-			
-			//statsd.increment("Calls - find User by username");
+		
 			Optional<User> tutorialData = userRepository.findByUsername(userName);// AndPassword(userName, encodedPass);
 			Image img=null;
 			if (tutorialData.isPresent()) {
 
 				if (bCryptPasswordEncoder.matches(password, tutorialData.get().getPassword())) {
 
-//					//check if verified user
-//					if(!tutorialData.get().isVerified()) {
-//						System.out.println("User is not yet verified");
-//						return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-//					}
-					
-					//matches password complete-- add code here
+
 					
 					User user = tutorialData.get();
 					 
-					//check if already image i.e. update request
-				//	statsd.increment("Calls - find image by user id");
+				
 					Optional<Image> img1 = imageRepository.findByUserId(user.getId());
 					if(img1.isPresent())
 					{
@@ -300,9 +253,7 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 						//statsd.increment("Calls - delete image by id");
 				    	imageRepository.delete(img1.get());
 
-//						statsd.recordExecutionTime("DB Response Time - Image record delete", System.currentTimeMillis() - startTime2);
 
-				    	//System.out.println("previous image deleted");
 					}
 					
 					
@@ -311,18 +262,11 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 					
 					String url = bucket_name+"/"+ user.getId()+"/"+profilePic.getOriginalFilename(); 
 					//create image
-				    //Image customerImage = fileArchiveService.saveFileToS3(profilePic); 
-				    //"bucket-name/user-id/image-file.extension", url
-				    //String bucket_name = getAppName;
-				    //		String url = bucket_name+"/"+ user.getId()+"/"+profilePic;
+				
 				    img = new Image(profilePic.getOriginalFilename(), user.getId(), url);
 					long startTime2 = System.currentTimeMillis();
 				    imageRepository.save(img);
-					//statsd.recordExecutionTime("DB Response Time - Image record saved", System.currentTimeMillis() - startTime2);
-
-				   // statsd.recordExecutionTime("Api Response Time - Post user/self/pic - Post pic of user",System.currentTimeMillis() - startTime);
-					
-					//return new ResponseEntity<>(tutorialData.get(), HttpStatus.OK);
+		
 				} else {
 					return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 				}
@@ -346,9 +290,7 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				System.out.println("In get /user/self/pic");
 
 		long startTime = System.currentTimeMillis();
-		//statsd.increment("Calls - Get user/self/pic - Get pic of User");
 
-		 //check user credentials and get userid
 		 String upd = request.getHeader("authorization");
 			if (upd == null || upd.isEmpty()) {
 				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -358,42 +300,27 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			String userName = pair.split(":")[0];
 			String password = pair.split(":")[1];
 
-			// System.out.println("username: " + userName);
-			// System.out.println("password: " + password);
-
-
 			System.out.println("Setting for get request");
-			//multiTenantManager.setCurrentTenant("get");
-			
-			//statsd.increment("Calls - find User by username");
-			Optional<User> tutorialData = userRepository.findByUsername(userName);// AndPassword(userName, encodedPass);
+
+			Optional<User> tutorialData = userRepository.findByUsername(userName);
 			Optional<Image> img=null;
 			if (tutorialData.isPresent()) {
 
 				if (bCryptPasswordEncoder.matches(password, tutorialData.get().getPassword())) {
 
-					//check if verified user
-//					if(!tutorialData.get().isVerified()) {
-//						System.out.println("User is not yet verified");
-//						return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-//					}
-					//matches password complete-- add code here
+
 					
 					User user = tutorialData.get();
 										
 					long startTime2 = System.currentTimeMillis();
-					//statsd.increment("Calls - find image by userid");
 				    img = imageRepository.findByUserId(user.getId());
-				   // statsd.recordExecutionTime("DB Response Time - Image record get", System.currentTimeMillis() - startTime2);
 				    if (img.isPresent()) {
-				    	//statsd.recordExecutionTime("Api Response Time - Get user/self/pic - Get pic of user",System.currentTimeMillis() - startTime);
 				  
 				    	return new ResponseEntity<>(img.get(), HttpStatus.OK);
 						  }
 				    else {
 						return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 					}
-					//return new ResponseEntity<>(tutorialData.get(), HttpStatus.OK);
 				} else {
 					return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 				}
@@ -412,8 +339,7 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			  throws Exception {
 				System.out.println("In delete /user/self/pic");
 		long startTime = System.currentTimeMillis();
-		//statsd.increment("Calls - Delete user/self/pic - Delete pic of User");
-		 //check user credentials and get userid
+	
 		 String upd = request.getHeader("authorization");
 			if (upd == null || upd.isEmpty()) {
 				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -423,12 +349,10 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			String userName = pair.split(":")[0];
 			String password = pair.split(":")[1];
 
-			// System.out.println("username: " + userName);
-			// System.out.println("password: " + password);
+	
 
 
 			System.out.println("Setting for delete request");
-			//multiTenantManager.setCurrentTenant("all");
 			
 			Optional<User> tutorialData = userRepository.findByUsername(userName);// AndPassword(userName, encodedPass);
 			Optional<Image> img=null;
@@ -437,20 +361,11 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				if (bCryptPasswordEncoder.matches(password, tutorialData.get().getPassword())) {
 
 					
-					//check if verified user
-//					if(!tutorialData.get().isVerified()) {
-//						System.out.println("User is not yet verified");
-//						return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-//					}
-					
-					
-					//matches password complete-- add code here
-					
 					
 					
 					User user = tutorialData.get();
 										
-					//statsd.increment("Calls - find image by userid");
+				
 				    img = imageRepository.findByUserId(user.getId());
 				    
 				    if (img.isPresent()) {
@@ -459,16 +374,13 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				    	String result = service.deleteFileFromS3Bucket(img.get().getUrl(),user.getId());
 						long startTime2 = System.currentTimeMillis();
 				    	imageRepository.delete(img.get());
-						//statsd.recordExecutionTime("DB Response Time - Image record delete", System.currentTimeMillis() - startTime2);
 
 				    	
-						//statsd.recordExecutionTime("Api Response Time - Delete user/self/pic - Delete pic of user",System.currentTimeMillis() - startTime);
 				    	return new ResponseEntity<>(result, HttpStatus.OK);
 				    }
 				    else {
 						return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 					}
-					//return new ResponseEntity<>(tutorialData.get(), HttpStatus.OK);
 				} else {
 					return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 				}

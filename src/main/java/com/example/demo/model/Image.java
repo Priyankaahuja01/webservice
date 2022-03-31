@@ -52,9 +52,7 @@ public class Image {
 		return id;
 	}
 
-//	public void setId(String id) {
-//		this.id = id;
-//	}
+
 
 	public String getFile_name() {
 		return file_name;

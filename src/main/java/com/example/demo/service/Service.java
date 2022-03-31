@@ -25,8 +25,7 @@ public class Service {
     private String bucketName;
 
 
-//    @Autowired
-//    private StatsDClient statsd;
+
 
     /**
      * Upload file into AWS S3
@@ -41,7 +40,6 @@ public class Service {
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(file.getSize());
             amazonS3Client.putObject(bucketName, keyName, file.getInputStream(), metadata);
-//            statsd.recordExecutionTime("S3 Response Time - Delete File", System.currentTimeMillis() - startTime);
             return bucketName;
         } catch (IOException ioe) {
             logger.error("IOException: " + ioe.getMessage());
@@ -52,7 +50,6 @@ public class Service {
             logger.info("AmazonClientException Message: " + clientException.getMessage());
             throw clientException;
         }
-//        statsd.recordExecutionTime("S3 Response Time - Upload pic File", System.currentTimeMillis() - startTime);
         return "File not uploaded: " + keyName;
     }
 
@@ -62,7 +59,6 @@ public class Service {
         String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
         System.out.println("fileName to delete from service: "+bucketName + "/"+fileName);
         amazonS3Client.deleteObject(new DeleteObjectRequest(bucketName, userId+"/"+fileName));
-//        statsd.recordExecutionTime("S3 Response Time - Delete pic File", System.currentTimeMillis() - startTime);
         return "Successfully deleted";
     }
 }
