@@ -22,7 +22,6 @@ import jakarta.persistence.*;
 import java.time.Clock;
 import java.time.OffsetDateTime;
 
-//import javax.persistence.
 
 @Entity
 @Table(name = "user")

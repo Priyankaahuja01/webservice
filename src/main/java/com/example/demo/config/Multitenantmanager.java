@@ -84,7 +84,6 @@ public class Multitenantmanager implements ApplicationListener<ContextRefreshedE
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		try {
 			addTenant("all", main_url, main_username, main_password);
-			//addTenant("get", sec_url, sec_username, sec_password);
 		} catch (Exception e ) {
 			e.printStackTrace();
 		}
