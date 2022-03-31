@@ -24,7 +24,7 @@ public class Assignment1 {
 class A1Controller{
 	@GetMapping(value="/healthz")
 	public ResponseEntity<String> getStatus() {
-		return new ResponseEntity<>("Hello world", org.springframework.http.HttpStatus.OK);
+		return new ResponseEntity<>("Hellooooooooooooooo", org.springframework.http.HttpStatus.OK);
 	}
 	
 }
