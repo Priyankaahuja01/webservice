@@ -28,7 +28,7 @@ class A1Controller{
 	@Autowired
     private StatsDClient statsd;
 
-	@GetMapping(value="/health")
+	@GetMapping(value="/healthz")
 	public ResponseEntity<String> getStatus() {
 		statsd.increment("Calls - Get user/self - User");
 		return new ResponseEntity<>("Hello!", org.springframework.http.HttpStatus.OK);
