@@ -51,7 +51,7 @@
         {
             "type": "file",
 			"source": "cloudwatch_agent_config.json",
-			"destination": "cloudwatch_agent_config.json"
+			"destination": "/home/ec2-user/cloudwatch_agent_config.json"
 		},
         {
             "type": "shell",

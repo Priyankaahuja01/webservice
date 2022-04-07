@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.repository.UserRepository;
 
+import com.timgroup.statsd.StatsDClient;
+import org.springframework.beans.factory.annotation.Autowired;
+
 
 @SpringBootApplication
 @EnableJpaRepositories(basePackageClasses = {UserRepository.class})
@@ -22,8 +25,12 @@ public class Assignment1 {
 
 @RestController
 class A1Controller{
+	@Autowired
+    private StatsDClient statsd;
+
 	@GetMapping(value="/healthz")
 	public ResponseEntity<String> getStatus() {
+		statsd.increment("Calls - Get user/self - User");
 		return new ResponseEntity<>("Hello!", org.springframework.http.HttpStatus.OK);
 	}
 	// @GetMapping(value="/health")
