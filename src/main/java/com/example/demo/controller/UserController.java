@@ -30,6 +30,7 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.response.UserResponse;
 import com.example.demo.service.Service;
 import com.example.demo.service.userService;
+import com.timgroup.statsd.StatsDClient;
 
 import jakarta.servlet.http.HttpServletRequest;
 @RestController
@@ -46,6 +47,9 @@ public class UserController {
 	
 	@Autowired
 	Service service;
+
+	@Autowired
+    private StatsDClient statsd;
 	@Autowired
 	ImageRepository imageRepository;
 	
@@ -57,7 +61,7 @@ public class UserController {
 		ResponseEntity<User> userResponse = null;
 try{
 		long startTime = System.currentTimeMillis();
-
+		statsd.increment("Calls - Get user/self - User");
 
 		String upd = request.getHeader("authorization");
 		if (upd == null || upd.isEmpty()) {
@@ -77,17 +81,22 @@ try{
 		long startTime1 = System.currentTimeMillis();
 		String name = p.getName();
 		User users = userservice.loadUserByUsername(name);
-	
+		statsd.recordExecutionTime("DB Response Time - Get user/self", System.currentTimeMillis() - startTime1);
+
 			if (bCryptPasswordEncoder.matches(password, users.getPassword())) {
 
-				
+				statsd.recordExecutionTime("Api Response Time - Get user/self - User by username",System.currentTimeMillis() - startTime);
+
 				return new ResponseEntity<>(users, HttpStatus.OK);
 			} else {
+				statsd.recordExecutionTime("Api Response Time - Get user/self - User by username",System.currentTimeMillis() - startTime);
+
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
 
 
-	}
+	} 
+
 	catch(Exception e)
 	{
 		System.out.println("Exception:"+e);
@@ -105,6 +114,7 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
 			System.out.println("In post /user");
 			long startTime = System.currentTimeMillis();
+			statsd.increment("Calls - Post user/ - Create new User");
 			if(user==null || user.getPassword() == null || user.getFirst_name() == null || 
 					user.getUsername() == null || user.getLast_name() == null)
 			{
@@ -114,12 +124,15 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			// check if already exists
 
 			long startTime1 = System.currentTimeMillis();
+			statsd.increment("Calls - find User by username");
+
 			System.out.println("calling get user");	
 
 			System.out.println("Setting for post request");
 			multitenantManager.setCurrentTenant("all");
 			Optional<User> u = userRepository.findByUsername(user.getUsername());
 
+			statsd.recordExecutionTime("DB Response Time - Get user", System.currentTimeMillis() - startTime1);
 
 			System.out.println("checking if user is present");	
 			if (u.isPresent()) {
@@ -137,9 +150,11 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 					User _user = userRepository
 							.save(new User(user.getFirst_name(), user.getLast_name(), user.getPassword(), user.getUsername()));
 
+							statsd.recordExecutionTime("DB Response Time - Save user in db", System.currentTimeMillis() - startTime2);
 
 					System.out.println("user saved in db, sending sns topic psoting call");	
 					
+					statsd.recordExecutionTime("Api Response Time - Post user/ - Create user",System.currentTimeMillis() - startTime);
 
 					return new ResponseEntity<>(_user, HttpStatus.CREATED);
 				} catch (Exception e) {
@@ -154,6 +169,7 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
 		System.out.println("In put /user/self");
 		long startTime = System.currentTimeMillis();
+		statsd.increment("Calls - Put user/self - Update User");
 
 		if (user == null) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -181,7 +197,10 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		multitenantManager.setCurrentTenant("all");
 
 		long startTime1 = System.currentTimeMillis();
+		statsd.increment("Calls - find User by username");
+
 		Optional<User> oldUser1 = userRepository.findByUsername(userName);
+		statsd.recordExecutionTime("DB Response Time - Get user", System.currentTimeMillis() - startTime1);
 
 	
 		if (oldUser1.isPresent()) {
@@ -198,6 +217,8 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
 				long startTime2 = System.currentTimeMillis();
 				userRepository.save(oldUser);
+				statsd.recordExecutionTime("DB Response Time - Update user in db", System.currentTimeMillis() - startTime2);
+				statsd.recordExecutionTime("Api Response Time - Put user/self - Update user",System.currentTimeMillis() - startTime);
 
 				return new ResponseEntity<>("Update success", HttpStatus.OK);
 
@@ -218,7 +239,8 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
 		System.out.println("In post /user/self/pic");
 		long startTime = System.currentTimeMillis();
-		
+		statsd.increment("Calls - Post user/self/pic - Post pic of User");
+
 		 String upd = request.getHeader("authorization");
 			if (upd == null || upd.isEmpty()) {
 				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -232,7 +254,8 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
 
 			System.out.println("Setting for post request");
-		
+			statsd.increment("Calls - find User by username");
+
 			Optional<User> tutorialData = userRepository.findByUsername(userName);// AndPassword(userName, encodedPass);
 			Image img=null;
 			if (tutorialData.isPresent()) {
@@ -243,15 +266,18 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 					
 					User user = tutorialData.get();
 					 
-				
+					statsd.increment("Calls - find image by user id");
+
 					Optional<Image> img1 = imageRepository.findByUserId(user.getId());
 					if(img1.isPresent())
 					{
 						//delete
 						long startTime2 = System.currentTimeMillis();
 						String result = service.deleteFileFromS3Bucket(img1.get().getUrl(), user.getId());
-						//statsd.increment("Calls - delete image by id");
+						statsd.increment("Calls - delete image by id");
+
 				    	imageRepository.delete(img1.get());
+						statsd.recordExecutionTime("DB Response Time - Image record delete", System.currentTimeMillis() - startTime2);
 
 
 					}
@@ -266,6 +292,9 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				    img = new Image(profilePic.getOriginalFilename(), user.getId(), url);
 					long startTime2 = System.currentTimeMillis();
 				    imageRepository.save(img);
+					statsd.recordExecutionTime("DB Response Time - Image record saved", System.currentTimeMillis() - startTime2);
+				    statsd.recordExecutionTime("Api Response Time - Post user/self/pic - Post pic of user",System.currentTimeMillis() - startTime);
+
 		
 				} else {
 					return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -290,6 +319,8 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				System.out.println("In get /user/self/pic");
 
 		long startTime = System.currentTimeMillis();
+		statsd.increment("Calls - Get user/self/pic - Get pic of User");
+
 
 		 String upd = request.getHeader("authorization");
 			if (upd == null || upd.isEmpty()) {
@@ -301,6 +332,7 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			String password = pair.split(":")[1];
 
 			System.out.println("Setting for get request");
+			statsd.increment("Calls - find User by username");
 
 			Optional<User> tutorialData = userRepository.findByUsername(userName);
 			Optional<Image> img=null;
@@ -313,9 +345,14 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 					User user = tutorialData.get();
 										
 					long startTime2 = System.currentTimeMillis();
+					statsd.increment("Calls - find image by userid");
+
 				    img = imageRepository.findByUserId(user.getId());
+					statsd.recordExecutionTime("DB Response Time - Image record get", System.currentTimeMillis() - startTime2);
+
 				    if (img.isPresent()) {
-				  
+						statsd.recordExecutionTime("Api Response Time - Get user/self/pic - Get pic of user",System.currentTimeMillis() - startTime);
+
 				    	return new ResponseEntity<>(img.get(), HttpStatus.OK);
 						  }
 				    else {
@@ -339,7 +376,8 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			  throws Exception {
 				System.out.println("In delete /user/self/pic");
 		long startTime = System.currentTimeMillis();
-	
+		statsd.increment("Calls - Delete user/self/pic - Delete pic of User");
+
 		 String upd = request.getHeader("authorization");
 			if (upd == null || upd.isEmpty()) {
 				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -364,7 +402,8 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 					
 					
 					User user = tutorialData.get();
-										
+					statsd.increment("Calls - find image by userid");
+					
 				
 				    img = imageRepository.findByUserId(user.getId());
 				    
@@ -374,8 +413,10 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				    	String result = service.deleteFileFromS3Bucket(img.get().getUrl(),user.getId());
 						long startTime2 = System.currentTimeMillis();
 				    	imageRepository.delete(img.get());
+						statsd.recordExecutionTime("DB Response Time - Image record delete", System.currentTimeMillis() - startTime2);
 
-				    	
+						statsd.recordExecutionTime("Api Response Time - Delete user/self/pic - Delete pic of user",System.currentTimeMillis() - startTime);
+
 				    	return new ResponseEntity<>(result, HttpStatus.OK);
 				    }
 				    else {

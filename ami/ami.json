@@ -49,6 +49,11 @@
 			"destination": "app.service"
 		},
         {
+            "type": "file",
+			"source": "cloudwatch_agent_config.json",
+			"destination": "cloudwatch_agent_config.json"
+		},
+        {
             "type": "shell",
             "inline": [               
                 "sleep 30",
@@ -58,7 +63,12 @@
                 "sudo chmod +x ./install",
                 "sudo ./install auto",
                 "sudo service codedeploy-agent start",
-                "sudo service codedeploy-agent status"
+                "sudo service codedeploy-agent status",
+                "sudo yum install amazon-cloudwatch-agent -y",
+                "sudo systemctl enable amazon-cloudwatch-agent",
+                "sudo systemctl start amazon-cloudwatch-agent",
+                "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/home/ec2-user/cloudwatch_agent_config.json -s"
+
 			]
         }
     ]
