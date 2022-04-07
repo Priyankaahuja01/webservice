@@ -95,11 +95,7 @@ try{
 			}
 
 
-	} else {
-		statsd.recordExecutionTime("Api Response Time - Get user/self - User by username",System.currentTimeMillis() - startTime);
-		
-		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-	}
+	} 
 
 	catch(Exception e)
 	{
