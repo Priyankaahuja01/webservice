@@ -64,7 +64,7 @@ jobs:
         run: |
           mkdir codedeploy_artifact
           zip -r webapp-${{ steps.vars.outputs.sha_short }}.zip \
-          ./target/demo-0.0.1-SNAPSHOT.jar ./codedeploy/*.sh appspec.yml
+          ./target/demo-0.0.1-SNAPSHOT.jar ./codedeploy/*.sh appspec.yml cloudwatch_agent_config.json
           mv webapp-${{ steps.vars.outputs.sha_short }}.zip ./codedeploy_artifact
       # Upload Artifacts to S3
       - name: Uploading Artifacts
