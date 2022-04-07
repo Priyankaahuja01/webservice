@@ -37,6 +37,7 @@ jobs:
           mvn clean install
           mkdir pcee && cp target/demo-0.0.1-SNAPSHOT.jar pcee
           cp pcee/*.jar ami
+          cp cloudwatch_agent_config.json ami
           cd ami && ls --all
 
       - name: Packer build
