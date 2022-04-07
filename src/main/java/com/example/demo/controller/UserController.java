@@ -81,15 +81,15 @@ try{
 		long startTime1 = System.currentTimeMillis();
 		String name = p.getName();
 		User users = userservice.loadUserByUsername(name);
-		statsd.recordExecutionTime("DB Response Time - Get user/self", System.currentTimeMillis() - startTime1);
+		// statsd.recordExecutionTime("DB Response Time - Get user/self", System.currentTimeMillis() - startTime1);
 
 			if (bCryptPasswordEncoder.matches(password, users.getPassword())) {
 
-				statsd.recordExecutionTime("Api Response Time - Get user/self - User by username",System.currentTimeMillis() - startTime);
+				// statsd.recordExecutionTime("Api Response Time - Get user/self - User by username",System.currentTimeMillis() - startTime);
 
 				return new ResponseEntity<>(users, HttpStatus.OK);
 			} else {
-				statsd.recordExecutionTime("Api Response Time - Get user/self - User by username",System.currentTimeMillis() - startTime);
+				// statsd.recordExecutionTime("Api Response Time - Get user/self - User by username",System.currentTimeMillis() - startTime);
 
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
@@ -132,7 +132,7 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			multitenantManager.setCurrentTenant("all");
 			Optional<User> u = userRepository.findByUsername(user.getUsername());
 
-			statsd.recordExecutionTime("DB Response Time - Get user", System.currentTimeMillis() - startTime1);
+			// statsd.recordExecutionTime("DB Response Time - Get user", System.currentTimeMillis() - startTime1);
 
 			System.out.println("checking if user is present");	
 			if (u.isPresent()) {
@@ -150,11 +150,11 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 					User _user = userRepository
 							.save(new User(user.getFirst_name(), user.getLast_name(), user.getPassword(), user.getUsername()));
 
-							statsd.recordExecutionTime("DB Response Time - Save user in db", System.currentTimeMillis() - startTime2);
+							// statsd.recordExecutionTime("DB Response Time - Save user in db", System.currentTimeMillis() - startTime2);
 
 					System.out.println("user saved in db, sending sns topic psoting call");	
 					
-					statsd.recordExecutionTime("Api Response Time - Post user/ - Create user",System.currentTimeMillis() - startTime);
+					// statsd.recordExecutionTime("Api Response Time - Post user/ - Create user",System.currentTimeMillis() - startTime);
 
 					return new ResponseEntity<>(_user, HttpStatus.CREATED);
 				} catch (Exception e) {
@@ -200,7 +200,7 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		statsd.increment("Calls - find User by username");
 
 		Optional<User> oldUser1 = userRepository.findByUsername(userName);
-		statsd.recordExecutionTime("DB Response Time - Get user", System.currentTimeMillis() - startTime1);
+		// statsd.recordExecutionTime("DB Response Time - Get user", System.currentTimeMillis() - startTime1);
 
 	
 		if (oldUser1.isPresent()) {
@@ -217,8 +217,8 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
 				long startTime2 = System.currentTimeMillis();
 				userRepository.save(oldUser);
-				statsd.recordExecutionTime("DB Response Time - Update user in db", System.currentTimeMillis() - startTime2);
-				statsd.recordExecutionTime("Api Response Time - Put user/self - Update user",System.currentTimeMillis() - startTime);
+				// statsd.recordExecutionTime("DB Response Time - Update user in db", System.currentTimeMillis() - startTime2);
+				// statsd.recordExecutionTime("Api Response Time - Put user/self - Update user",System.currentTimeMillis() - startTime);
 
 				return new ResponseEntity<>("Update success", HttpStatus.OK);
 
@@ -277,7 +277,7 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 						statsd.increment("Calls - delete image by id");
 
 				    	imageRepository.delete(img1.get());
-						statsd.recordExecutionTime("DB Response Time - Image record delete", System.currentTimeMillis() - startTime2);
+						// statsd.recordExecutionTime("DB Response Time - Image record delete", System.currentTimeMillis() - startTime2);
 
 
 					}
@@ -292,8 +292,8 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				    img = new Image(profilePic.getOriginalFilename(), user.getId(), url);
 					long startTime2 = System.currentTimeMillis();
 				    imageRepository.save(img);
-					statsd.recordExecutionTime("DB Response Time - Image record saved", System.currentTimeMillis() - startTime2);
-				    statsd.recordExecutionTime("Api Response Time - Post user/self/pic - Post pic of user",System.currentTimeMillis() - startTime);
+					// statsd.recordExecutionTime("DB Response Time - Image record saved", System.currentTimeMillis() - startTime2);
+				    // statsd.recordExecutionTime("Api Response Time - Post user/self/pic - Post pic of user",System.currentTimeMillis() - startTime);
 
 		
 				} else {
@@ -348,10 +348,10 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 					statsd.increment("Calls - find image by userid");
 
 				    img = imageRepository.findByUserId(user.getId());
-					statsd.recordExecutionTime("DB Response Time - Image record get", System.currentTimeMillis() - startTime2);
+					// statsd.recordExecutionTime("DB Response Time - Image record get", System.currentTimeMillis() - startTime2);
 
 				    if (img.isPresent()) {
-						statsd.recordExecutionTime("Api Response Time - Get user/self/pic - Get pic of user",System.currentTimeMillis() - startTime);
+						// statsd.recordExecutionTime("Api Response Time - Get user/self/pic - Get pic of user",System.currentTimeMillis() - startTime);
 
 				    	return new ResponseEntity<>(img.get(), HttpStatus.OK);
 						  }
@@ -413,9 +413,9 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				    	String result = service.deleteFileFromS3Bucket(img.get().getUrl(),user.getId());
 						long startTime2 = System.currentTimeMillis();
 				    	imageRepository.delete(img.get());
-						statsd.recordExecutionTime("DB Response Time - Image record delete", System.currentTimeMillis() - startTime2);
+						// statsd.recordExecutionTime("DB Response Time - Image record delete", System.currentTimeMillis() - startTime2);
 
-						statsd.recordExecutionTime("Api Response Time - Delete user/self/pic - Delete pic of user",System.currentTimeMillis() - startTime);
+						// statsd.recordExecutionTime("Api Response Time - Delete user/self/pic - Delete pic of user",System.currentTimeMillis() - startTime);
 
 				    	return new ResponseEntity<>(result, HttpStatus.OK);
 				    }
