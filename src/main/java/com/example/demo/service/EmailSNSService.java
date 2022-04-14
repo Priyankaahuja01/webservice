@@ -1,6 +1,8 @@
 package com.example.demo.service;
 
 
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
@@ -15,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 
@@ -42,14 +45,14 @@ import java.util.Random;
 
 
 
-@Service
-public class SNS {
+@Component
+public class EmailSNSService {
 
   
   SnsClient snsClient;
-  @Value("${aws.sns.topic.sample-a09-topic.ARN}")
+  @Value("${aws.sns.topic.sample-A09-topic.ARN}")
   String snsTopicARN;
-  private final static Logger logger = LoggerFactory.getLogger(SNS.class);
+  private final static Logger logger = LoggerFactory.getLogger(EmailSNSService.class);
   public void postToTopic(String recipientEmail, String requestType) {
 
 
@@ -69,8 +72,10 @@ public class SNS {
           if (snsClient == null) {
               System.out.println("snsClient object is still   ..........null");
           }
+//          AwsBasicCredentials awsCreds = AwsBasicCredentials.create( "AKIA33HDP4IMPHJ3AYZS", "ZVlgRCIUODeeltVBFv0kHXEKOr7lY1UwqUQ0lD9s");
           SnsClient snsClient = SnsClient.builder()
                   .region(Region.US_EAST_1)
+//                  .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
                   .build();
           PublishResponse result = snsClient.publish(request);
           System.out.println("Publishing done");
@@ -81,7 +86,7 @@ public class SNS {
 
           AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard().build();
           DynamoDB dynamoDb = new DynamoDB(client);
-          Table table = dynamoDb.getTable("ass");
+          Table table = dynamoDb.getTable("Account");
 //          PutItemRequest request = new PutItemRequest().withTableName("TokenTable").withReturnConsumedCapacity("TOTAL");
 //          PutItemResult _response = client.putItem(request);
 //          Map<String,Object> user_token = new HashMap<String, Object>();
