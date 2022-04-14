@@ -31,7 +31,7 @@ class A1Controller{
 	@GetMapping(value="/healthz")
 	public ResponseEntity<String> getStatus() {
 		statsd.increment("Calls - Get user/self - User");
-		return new ResponseEntity<>("Hello!", org.springframework.http.HttpStatus.OK);
+		return new ResponseEntity<>("Hello its me!", org.springframework.http.HttpStatus.OK);
 	}
 	// @GetMapping(value="/health")
 	// public ResponseEntity<String> getStatus2() {
