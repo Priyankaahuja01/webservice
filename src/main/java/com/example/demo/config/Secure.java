@@ -44,7 +44,7 @@ httpSecurity
 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 .and()
 .authorizeRequests()
-.antMatchers(HttpMethod.POST, "/v2/user").permitAll()
+.antMatchers(HttpMethod.POST, "/v1/user").permitAll()
 .antMatchers("/healthz").permitAll()
 .antMatchers("/health").permitAll()
 .anyRequest()
