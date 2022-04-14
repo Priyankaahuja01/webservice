@@ -43,7 +43,7 @@ import com.timgroup.statsd.StatsDClient;
 
 import jakarta.servlet.http.HttpServletRequest;
 @RestController
-@RequestMapping("/v2")
+@RequestMapping("/v1")
 public class UserController {
 	@Autowired
 	UserRepository userRepository;
