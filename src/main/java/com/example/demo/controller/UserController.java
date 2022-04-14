@@ -37,7 +37,7 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.response.UserResponse;
 import com.example.demo.service.Service;
 import com.example.demo.service.userService;
-import com.example.demo.service.EmailSNSService;
+import com.example.demo.service.EmailSNS;
 
 import com.timgroup.statsd.StatsDClient;
 
@@ -63,7 +63,7 @@ public class UserController {
 	ImageRepository imageRepository;
 
 	@Autowired
-	EmailSNSService snsService;
+	EmailSNS snsService;
 	
 	private DynamoDB dynamoDB;
 	
@@ -160,7 +160,7 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			// statsd.recordExecutionTime("DB Response Time - Get user", System.currentTimeMillis() - startTime1);
 
 			System.out.println("checking if user is present");	
-			if (u.isPresent()) {
+			if (!u.isPresent()) {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
 

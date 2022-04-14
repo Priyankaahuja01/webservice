@@ -21,7 +21,7 @@ public class Service {
     @Autowired
     private AmazonS3 amazonS3Client;
 
-    @Value("${aws.s3.bucket:xyz}")
+    @Value("${aws.s3.bucket}")
     private String bucketName;
 
 
