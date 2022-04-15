@@ -1,10 +1,8 @@
 package com.example.demo.controller;
 
 
-import java.math.BigDecimal;
 import java.security.Principal;
 import java.time.Clock;
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
@@ -23,11 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
-import com.amazonaws.services.dynamodbv2.document.DynamoDB;
-import com.amazonaws.services.dynamodbv2.document.Item;
-import com.amazonaws.services.dynamodbv2.document.Table;
 
 import com.example.demo.config.Multitenantmanager;
 import com.example.demo.model.Image;
@@ -37,8 +30,6 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.response.UserResponse;
 import com.example.demo.service.Service;
 import com.example.demo.service.userService;
-import com.example.demo.service.EmailSNS;
-
 import com.timgroup.statsd.StatsDClient;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -61,11 +52,6 @@ public class UserController {
     private StatsDClient statsd;
 	@Autowired
 	ImageRepository imageRepository;
-
-	@Autowired
-	EmailSNS snsService;
-	
-	private DynamoDB dynamoDB;
 	
 	@Autowired
 	Multitenantmanager multitenantManager;
@@ -96,31 +82,20 @@ try{
 		String name = p.getName();
 		User users = userservice.loadUserByUsername(name);
 		// statsd.recordExecutionTime("DB Response Time - Get user/self", System.currentTimeMillis() - startTime1);
-//		if (users.is()) {
 
 			if (bCryptPasswordEncoder.matches(password, users.getPassword())) {
 
-				statsd.recordExecutionTime("Api Response Time - Get user/self - User by username",System.currentTimeMillis() - startTime);
-				
-				//check if verified user
-				if(!users.isVerified()) {
-					System.out.println("User is not yet verified");
-					return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-				}
-				
-				
+				// statsd.recordExecutionTime("Api Response Time - Get user/self - User by username",System.currentTimeMillis() - startTime);
+
 				return new ResponseEntity<>(users, HttpStatus.OK);
 			} else {
 				// statsd.recordExecutionTime("Api Response Time - Get user/self - User by username",System.currentTimeMillis() - startTime);
-				
+
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
-//		} else {
-			// statsd.recordExecutionTime("Api Response Time - Get user/self - User by username",System.currentTimeMillis() - startTime);
-			
-//			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//		}
-	}
+
+
+	} 
 
 	catch(Exception e)
 	{
@@ -160,7 +135,7 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			// statsd.recordExecutionTime("DB Response Time - Get user", System.currentTimeMillis() - startTime1);
 
 			System.out.println("checking if user is present");	
-			if (!u.isPresent()) {
+			if (u.isPresent()) {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
 
@@ -178,8 +153,7 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 							// statsd.recordExecutionTime("DB Response Time - Save user in db", System.currentTimeMillis() - startTime2);
 
 					System.out.println("user saved in db, sending sns topic psoting call");	
-					snsService.postToTopic("POST", _user.getUsername());
-
+					
 					// statsd.recordExecutionTime("Api Response Time - Post user/ - Create user",System.currentTimeMillis() - startTime);
 
 					return new ResponseEntity<>(_user, HttpStatus.CREATED);
@@ -232,11 +206,7 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		if (oldUser1.isPresent()) {
 			if (bCryptPasswordEncoder.matches(password, oldUser1.get().getPassword())) {// update
 				
-					//check if verified user
-					if(!oldUser1.get().isVerified()) {
-						System.out.println("User is not yet verified");
-						return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-					}
+				
 				
 				User oldUser = oldUser1.get();
 				oldUser.setFirst_name(user.getFirst_name());
@@ -292,11 +262,7 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
 				if (bCryptPasswordEncoder.matches(password, tutorialData.get().getPassword())) {
 
-                   //check if verified user
-                if(!tutorialData.get().isVerified()) {
-	            System.out.println("User is not yet verified");
-	            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-}  
+
 					
 					User user = tutorialData.get();
 					 
@@ -374,11 +340,7 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
 				if (bCryptPasswordEncoder.matches(password, tutorialData.get().getPassword())) {
 
-                   //check if verified user
-					if(!tutorialData.get().isVerified()) {
-						System.out.println("User is not yet verified");
-						return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-					}
+
 					
 					User user = tutorialData.get();
 										
@@ -437,11 +399,6 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				if (bCryptPasswordEncoder.matches(password, tutorialData.get().getPassword())) {
 
 					
-					//check if verified user
-					if(!tutorialData.get().isVerified()) {
-						System.out.println("User is not yet verified");
-						return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-					}
 					
 					
 					User user = tutorialData.get();
@@ -473,133 +430,4 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
 		 
 	  }
-
-      //verifyUserEmail?email=user@example.com&token=sometoken
-	 //update verfiry and verifed_on in database
-	 @GetMapping("/verifyUserEmail")
-	 public ResponseEntity<String> verifedUserUpdate(@RequestParam("email") String email,
-			 @RequestParam("token") String token) {
-	  String result ="not verfied get";
-		 try {
-			 //System.out.println("in post");
-			 //check if token is still valid in EmailID_Data
-			 
-			  // confirm dynamoDB table exists
-			 AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard().build();
-			 dynamoDB = new DynamoDB(client);	       
-			 System.out.println("Get /verifyUserEmail");
-			 Table userEmailsTable = dynamoDB.getTable("EmailID_Data");
-			 if(userEmailsTable == null) {
-				 System.out.println("Table 'Emails_DATA' is not in dynamoDB.");
-				 return null;
-			 }
-			 
-			 System.out.println("EmailD_Data exits table");
-			 System.out.println("EmailD in input is:"+email);
-			 System.out.println("Index of spcae: in meial is: "+email.indexOf(" ",0));
-			 if(email.indexOf(" ", 0)!=-1) {
-				  email=email.replace(" ", "+");
-			  }
-			 System.out.println("EmailD after replacement is:"+email);
-			 //check if item exits
-			 Item item = userEmailsTable.getItem("id",email);
-			 System.out.println("item= "+item);
-			 if (item == null ) {
-				 //table.putItem(new
-				 
-				 
-				 
-				 result="token expired item not present";
-			 }else {
-				 //if token expired
-				 BigDecimal toktime=(BigDecimal)item.get("TimeToExist");
-				 
-				 
-				 //calcuate now time
-				 long now = Instant.now().getEpochSecond(); // unix time
-				 long timereminsa =  now - toktime.longValue(); // 2 mins in sec
-				 System.out.println("tokentime: "+toktime);
-				 System.out.println("now: "+now);
-				 System.out.println("remins: "+timereminsa);
-				 
-				 
-				 //ttl=(ttl + now); // when object will be expired
-				 if(timereminsa > 0)
-				 {
-					 //expired
-					 result="token expired";
-				 }
-				 
-				 
-				 //else update
-				  else {
-					  System.out.println("In get");
-					  result ="verified success get";
-					  //get user and update feilds
-					  
-					  updateFields( email,  token);
-					  }
-				 
-			 }
-			 
-			
-			 
-		 }
-		 catch(Exception e)
-		 {
-			 System.out.println(e);
-		 }
-		 
-		 return new ResponseEntity<>(result, HttpStatus.OK);
-  }
-  
-  
-  @PostMapping("/verifyUserEmail")
-	 public ResponseEntity<String> verifedUserUpdatePost(@RequestParam("email") String email,
-		  @RequestParam("token") String token) {
-	  String result ="not verfied post";
-		 try {
-			 //System.out.println("in post");
-			 //check if token is still valid
-			 
-			 System.out.println("In post");
-			 result ="verified success post";
-			 updateFields( email,  token);
-			 
-		 }
-		 catch(Exception e)
-		 {
-			 System.out.println(e);
-		 }
-		 
-		 return new ResponseEntity<>(result, HttpStatus.OK);
-  }
-  
-  public void updateFields(String email, String token) {
-	  System.out.println("Email is: "+email);
-	  System.out.println("tokenis: "+token);
-	  
-	  //check if email has space
-	  if(email.indexOf(' ', 0)!=-1) {
-		  email.replace(' ', '+');
-	  }
-	  
-	  System.out.println("Now Email is: "+email);
-	  
-	  Optional<User> tutorialData = userRepository.findByUsername(email);
-	  if (tutorialData.isPresent()) {
-		  
-		  User user = tutorialData.get();
-		  user.setVerified(true);
-		  user.setVerified_on( OffsetDateTime.now(Clock.systemUTC()).toString());
-		  user.setAccount_updated(OffsetDateTime.now(Clock.systemUTC()).toString());
-		  userRepository.save(user);
-		  System.out.println("user fields save success");
-	  }
-	  else {
-		  System.out.println("error update verify user fields");
-	  }
-	  
-	  System.out.println("updated user verify fields");
-  }
 }
