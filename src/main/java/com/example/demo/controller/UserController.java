@@ -502,7 +502,7 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			  }
 			 System.out.println("EmailD after replacement is:"+email);
 			 //check if item exits
-			 Item item = userEmailsTable.getItem("id",email);
+			 Item item = userEmailsTable.getItem("emailID",email);
 			 System.out.println("item= "+item);
 			 if (item == null ) {
 				 //table.putItem(new
@@ -512,7 +512,7 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				 result="token expired item not present";
 			 }else {
 				 //if token expired
-				 BigDecimal toktime=(BigDecimal)item.get("TimeToExist");
+				 BigDecimal toktime=(BigDecimal)item.get("TimeToLive");
 				 
 				 
 				 //calcuate now time
