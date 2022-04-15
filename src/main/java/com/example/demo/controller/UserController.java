@@ -488,7 +488,7 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			 AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard().build();
 			 dynamoDB = new DynamoDB(client);	       
 			 System.out.println("Get /verifyUserEmail");
-			 Table userEmailsTable = dynamoDB.getTable("EmailID_Data");
+			 Table userEmailsTable = dynamoDB.getTable("Accounttokentable");
 			 if(userEmailsTable == null) {
 				 System.out.println("Table 'Emails_DATA' is not in dynamoDB.");
 				 return null;
