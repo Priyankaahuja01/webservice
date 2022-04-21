@@ -488,7 +488,7 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			 AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard().build();
 			 dynamoDB = new DynamoDB(client);	       
 			 System.out.println("Get /verifyUserEmail");
-			 Table userEmailsTable = dynamoDB.getTable("Accounttokentable");
+			 Table userEmailsTable = dynamoDB.getTable("EmailID_Data");
 			 if(userEmailsTable == null) {
 				 System.out.println("Table 'Emails_DATA' is not in dynamoDB.");
 				 return null;
@@ -502,7 +502,7 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			  }
 			 System.out.println("EmailD after replacement is:"+email);
 			 //check if item exits
-			 Item item = userEmailsTable.getItem("emailID",email);
+			 Item item = userEmailsTable.getItem("id",email);
 			 System.out.println("item= "+item);
 			 if (item == null ) {
 				 //table.putItem(new
@@ -512,7 +512,7 @@ return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				 result="token expired item not present";
 			 }else {
 				 //if token expired
-				 BigDecimal toktime=(BigDecimal)item.get("TimeToLive");
+				 BigDecimal toktime=(BigDecimal)item.get("TimeToExist");
 				 
 				 
 				 //calcuate now time
